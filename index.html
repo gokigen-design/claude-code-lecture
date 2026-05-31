@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Claude Code 徹底活用講座 | アーカイブ</title>
+  <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&family=Noto+Sans+JP:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Zen Maru Gothic', 'Noto Sans JP', sans-serif;
+      font-size: 16px;
+      line-height: 1.8;
+      color: #2D2D2D;
+      background: #FDF8F5;
+      min-height: 100vh;
+    }
+
+    /* ========== THUMBNAIL ========== */
+    .thumbnail-wrap {
+      width: 100%;
+      max-width: 900px;
+      margin: 0 auto;
+      display: block;
+    }
+
+    .thumbnail-wrap img {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    /* thumbnail.jpgがない場合のフォールバック */
+    .thumbnail-fallback {
+      display: none;
+      position: relative;
+      overflow: hidden;
+      background: linear-gradient(135deg, #FF8C42 0%, #FF6B8A 50%, #E84393 100%);
+      padding: 60px 20px 70px;
+      text-align: center;
+      color: #fff;
+    }
+
+    .thumbnail-wrap img[src="thumbnail.jpg"]:not([complete]) + .thumbnail-fallback,
+    .thumbnail-wrap img.error + .thumbnail-fallback {
+      display: block;
+    }
+
+    /* ========== MAIN ========== */
+    .main {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 40px 20px 80px;
+    }
+
+    .section-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: #2D2D2D;
+      margin-bottom: 24px;
+      padding-bottom: 10px;
+      border-bottom: 3px solid #FF8C42;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    /* ========== DAY SECTION ========== */
+    .day-section {
+      margin-bottom: 48px;
+      background: #fff;
+      border-radius: 18px;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+      overflow: hidden;
+    }
+
+    .day-header {
+      background: linear-gradient(135deg, #FF8C42, #FF6B8A);
+      color: #fff;
+      padding: 22px 28px 18px;
+    }
+
+    .day-header.day2 { background: linear-gradient(135deg, #E84393, #9B59B6); }
+    .day-header.day3 { background: linear-gradient(135deg, #9B59B6, #FF6B8A); }
+
+    .day-label {
+      font-size: 12px;
+      font-weight: 500;
+      opacity: 0.85;
+      letter-spacing: 0.12em;
+      margin-bottom: 4px;
+    }
+
+    .day-title {
+      font-size: 22px;
+      font-weight: 700;
+      margin-bottom: 3px;
+    }
+
+    .day-subtitle {
+      font-size: 13px;
+      opacity: 0.9;
+    }
+
+    .day-body {
+      padding: 22px 28px 24px;
+    }
+
+    /* アジェンダ */
+    .agenda {
+      list-style: none;
+      font-size: 14px;
+      color: #444;
+      margin-bottom: 20px;
+    }
+
+    .agenda li {
+      padding: 5px 0 5px 18px;
+      position: relative;
+      line-height: 1.6;
+    }
+
+    .agenda li::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 13px;
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #FF8C42;
+    }
+
+    .agenda li.sub {
+      padding-left: 32px;
+      font-size: 13px;
+      color: #666;
+    }
+
+    .agenda li.sub::before {
+      width: 5px;
+      height: 5px;
+      top: 14px;
+      left: 14px;
+      background: #ccc;
+    }
+
+    /* ボタン群 */
+    .btn-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 22px;
+      border-radius: 10px;
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 700;
+      text-decoration: none;
+      cursor: pointer;
+      transition: opacity 180ms ease, transform 150ms ease;
+      border: none;
+    }
+
+    .btn:hover {
+      opacity: 0.88;
+      transform: translateY(-2px);
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #FF8C42, #FF6B8A);
+      color: #fff;
+    }
+
+    .btn-primary.day2 { background: linear-gradient(135deg, #E84393, #9B59B6); }
+    .btn-primary.day3 { background: linear-gradient(135deg, #9B59B6, #FF6B8A); }
+
+    .btn-secondary {
+      background: #F5F0FF;
+      color: #7C3AED;
+      border: 1.5px solid #DDD6FE;
+    }
+
+    .btn-secondary:hover {
+      background: #EDE9FE;
+    }
+
+    /* ========== SUMMARY BOX ========== */
+    .summary-box {
+      background: linear-gradient(135deg, #FFF5F0, #FFF0F7);
+      border-radius: 12px;
+      border-left: 4px solid #FF8C42;
+      padding: 16px 20px;
+      font-size: 13px;
+      color: #555;
+      margin-bottom: 20px;
+    }
+
+    .summary-box strong { color: #E84393; }
+
+    /* ========== DIVIDER ========== */
+    .divider {
+      height: 1px;
+      background: #F0E8FF;
+      margin: 20px 0;
+    }
+
+    /* ========== FOOTER ========== */
+    .footer {
+      text-align: center;
+      padding: 28px 20px;
+      background: #2D2D2D;
+      color: rgba(255,255,255,0.45);
+      font-size: 12px;
+    }
+
+    /* ========== RESPONSIVE ========== */
+    @media (max-width: 600px) {
+      .day-body { padding: 18px 18px 20px; }
+      .day-header { padding: 18px 18px 14px; }
+      .main { padding: 28px 14px 60px; }
+      .btn-group { flex-direction: column; }
+      .btn { justify-content: center; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .btn { transition: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- THUMBNAIL -->
+  <div class="thumbnail-wrap">
+    <img
+      src="thumbnail.png"
+      alt="クライアントワーカーのための Claude Code 徹底活用講座"
+      onerror="this.style.display='none'; document.getElementById('fallback').style.display='block';"
+    >
+  </div>
+
+  <!-- フォールバック（画像がない場合） -->
+  <div id="fallback" style="display:none; background:linear-gradient(135deg,#FF8C42,#FF6B8A); color:#fff; text-align:center; padding:48px 20px;">
+    <p style="font-size:13px; opacity:.85; margin-bottom:8px;">クライアントワーカーのための</p>
+    <h1 style="font-size:clamp(22px,5vw,36px); font-weight:700;">Claude Code 徹底活用講座</h1>
+    <p style="margin-top:12px; font-size:13px; opacity:.85;">講師：松浦さおり ／ 寺沢まや</p>
+  </div>
+
+  <!-- MAIN -->
+  <main class="main">
+
+    <h2 class="section-title">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#FF8C42" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <polygon points="23 7 16 12 23 17 23 7"/>
+        <rect x="1" y="5" width="15" height="14" rx="2" ry="2"/>
+      </svg>
+      アーカイブ・資料
+    </h2>
+
+    <!-- ===== DAY 1 ===== -->
+    <div class="day-section">
+      <div class="day-header">
+        <div class="day-label">DAY 1 &nbsp;|&nbsp; 4月22日（水）10:00〜12:00</div>
+        <div class="day-title">魔法を体験しよう！</div>
+        <div class="day-subtitle">Claude Code の基本から実演まで</div>
+      </div>
+      <div class="day-body">
+
+        <div class="summary-box">
+          今日お見せした"魔法"は <strong>3つの部品</strong> でできています：<br>
+          <strong>Claude Code本体</strong>（土台）＋ <strong>MCP</strong>（サービス連携）＋ <strong>スキル</strong>（自分だけの手順書）
+        </div>
+
+        <ul class="agenda">
+          <li>自己紹介・3日間の流れ</li>
+          <li>AIの進化とシステム開発の変化
+            <ul style="list-style:none; padding-left:0;">
+              <li class="sub">2022年：ChatGPT登場 → AI時代の始まり</li>
+              <li class="sub">2024年：エージェント登場 → AIが動く</li>
+              <li class="sub">2025〜2026年：MCP登場 → 今ここ</li>
+            </ul>
+          </li>
+          <li>実演1：Claude CodeでLPを作る</li>
+          <li>実演2：Claude Codeで作ったLPをUTAGEに連携する（MCP）</li>
+          <li>実演3：インスタ投稿のリサーチをしてみよう／スキル化</li>
+          <li>Day1まとめ・Day2予告</li>
+        </ul>
+
+        <div class="divider"></div>
+
+        <div class="btn-group">
+          <a href="https://utlink.jp/l/FNVNGBHDE7ql" target="_blank" rel="noopener" class="btn btn-primary">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
+            アーカイブを視聴する
+          </a>
+          <a href="https://congruous-jaw-052.notion.site/Day1-3481578c95408012971ed11567c00c71" target="_blank" rel="noopener" class="btn btn-secondary">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3"/><line x1="8" y1="9" x2="16" y2="9"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="12" y2="17"/></svg>
+            Day1 資料
+          </a>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ===== DAY 2 ===== -->
+    <div class="day-section">
+      <div class="day-header day2">
+        <div class="day-label">DAY 2 &nbsp;|&nbsp; 4月23日（木）10:00〜12:00</div>
+        <div class="day-title">環境を作ろう！</div>
+        <div class="day-subtitle">Claude Code 環境構築＋セキュリティ</div>
+      </div>
+      <div class="day-body">
+
+        <div class="summary-box">
+          <strong>2日目のゴール：</strong><br>
+          Claudeデスクトップで動かせる / スプシ書き込み / Git管理 / セキュリティ対策の4つを実施する
+        </div>
+
+        <ul class="agenda">
+          <li>Claudeデスクトップ 環境構築ハンズオン
+            <ul style="list-style:none; padding-left:0;">
+              <li class="sub">操作モード5種類（プランモードがおすすめ）</li>
+              <li class="sub">CLAUDE.md の作り方・設定方針</li>
+              <li class="sub">モデル選択（Sonnet 4.6が日常使いの主役）</li>
+            </ul>
+          </li>
+          <li>
+            <a href="https://maya-ai-dashboard.vercel.app/" target="_blank" rel="noopener" style="color:#E84393; font-weight:700; text-decoration:none;">ハンズオン1</a>：スプシ書き込み環境を作る
+            <span style="font-size:12px; color:#999; margin-left:6px;">→ 「スプシ書き込み環境」タブ</span>
+          </li>
+          <li>
+            <a href="https://maya-ai-dashboard.vercel.app/" target="_blank" rel="noopener" style="color:#E84393; font-weight:700; text-decoration:none;">ハンズオン2</a>：体験レポートページを作る
+            <span style="font-size:12px; color:#999; margin-left:6px;">→ 「体験レポートページ」タブ</span>
+          </li>
+          <li>
+            <a href="https://maya-ai-dashboard.vercel.app/" target="_blank" rel="noopener" style="color:#E84393; font-weight:700; text-decoration:none;">ハンズオン3</a>：Vercel に公開してみよう
+            <span style="font-size:12px; color:#999; margin-left:6px;">→ 「Vercel公開」タブ</span>
+          </li>
+          <li>
+            <a href="https://maya-ai-dashboard.vercel.app/" target="_blank" rel="noopener" style="color:#E84393; font-weight:700; text-decoration:none;">ハンズオン4</a>：Git &amp; GitHub を設定しよう
+            <span style="font-size:12px; color:#999; margin-left:6px;">→ 「Git&amp;GitHub」タブ</span>
+          </li>
+          <li>よいアウトプットに必要な「設計」の考え方
+            <ul style="list-style:none; padding-left:0;">
+              <li class="sub">ゴール・ターゲット・素材の3点セットを用意する</li>
+              <li class="sub">設計なし → 何度もやり直し → 時間もトークンもムダ</li>
+            </ul>
+          </li>
+          <li>AIと安全に仕事するために（
+            <a href="https://maya-ai-dashboard.vercel.app/" target="_blank" rel="noopener" style="color:#E84393; text-decoration:none;">セキュリティ対策タブ</a>）
+            <ul style="list-style:none; padding-left:0;">
+              <li class="sub">怖いこと1：PCのファイルが消える・書き換えられる</li>
+              <li class="sub">怖いこと2：APIキー（鍵）が漏洩する</li>
+              <li class="sub">怖いこと3：外部から操られる（プロンプトインジェクション）</li>
+            </ul>
+          </li>
+        </ul>
+
+        <div class="divider"></div>
+
+        <div class="btn-group">
+          <a href="https://utlink.jp/l/3HEB7tLaPZB1" target="_blank" rel="noopener" class="btn btn-primary day2">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
+            アーカイブを視聴する
+          </a>
+          <a href="https://congruous-jaw-052.notion.site/Day2-3481578c95408080958dce2bf5bda6c3" target="_blank" rel="noopener" class="btn btn-secondary">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3"/><line x1="8" y1="9" x2="16" y2="9"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="12" y2="17"/></svg>
+            Day2 資料（Notion）
+          </a>
+          <a href="https://maya-ai-dashboard.vercel.app/" target="_blank" rel="noopener" class="btn btn-secondary">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+            プロンプト＆ハンズオンページ
+          </a>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ===== DAY 3 ===== -->
+    <div class="day-section">
+      <div class="day-header day3">
+        <div class="day-label">DAY 3 &nbsp;|&nbsp; 4月28日（火）10:00〜12:00</div>
+        <div class="day-title">引き出しを増やそう！</div>
+        <div class="day-subtitle">クライアントワークと Claude Code</div>
+      </div>
+      <div class="day-body">
+
+        <div class="summary-box">
+          <strong>「探す時間」がクライアントワークの一番の地味なロス。</strong><br>
+          AIに「頼けばわかる状態」を作ることが、AI時代のクライアントワークの核心。
+        </div>
+
+        <ul class="agenda">
+          <li>3日間の振り返り・みんなの成果共有</li>
+          <li>さおりさんが作ってきたもの紹介
+            <ul style="list-style:none; padding-left:0;">
+              <li class="sub">LPマネージャー（見かけたLPをワンクリックでNotionに保存）</li>
+              <li class="sub">リールダウンローダー（TikTok転用向けInstagram動画の自動取得）</li>
+            </ul>
+          </li>
+          <li>クライアントワークとClaude Code
+            <ul style="list-style:none; padding-left:0;">
+              <li class="sub">README.md（開発ナビ）＋ TASKS.md（タスク管理）＋ WORKLOG.md（作業ログ）</li>
+              <li class="sub">AIと壁打ち・記録しながら仕事する仕組み</li>
+              <li class="sub">フォルダ構成こそが最重要（システム開発より効く）</li>
+            </ul>
+          </li>
+        </ul>
+
+        <div class="divider"></div>
+
+        <div class="btn-group">
+          <a href="https://utlink.jp/l/0UqWIAPYBTgz" target="_blank" rel="noopener" class="btn btn-primary day3">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
+            アーカイブを視聴する
+          </a>
+          <a href="https://congruous-jaw-052.notion.site/Day3-34f1578c95408023a93ec29f9b21091b" target="_blank" rel="noopener" class="btn btn-secondary">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3"/><line x1="8" y1="9" x2="16" y2="9"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="12" y2="17"/></svg>
+            Day3 資料
+          </a>
+          <a href="_template.zip" download class="btn btn-secondary">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            フォルダテンプレートをDL
+          </a>
+        </div>
+
+      </div>
+    </div>
+
+  </main>
+
+  <footer class="footer">
+    <p>クライアントワーカーのための Claude Code 徹底活用講座</p>
+    <p style="margin-top:4px;">講師：松浦さおり ／ 寺沢まや &nbsp;｜&nbsp; 2026</p>
+  </footer>
+
+</body>
+</html>
